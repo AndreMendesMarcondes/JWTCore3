@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace JWTCore3.Controllers
 {
@@ -17,7 +17,7 @@ namespace JWTCore3.Controllers
         }
 
         // GET: api/Product/5
-        [ClaimsAuthorize("Product","Get")]
+        [ClaimsAuthorize("Product", "Get")]
         [HttpGet("{id}", Name = "Get")]
         public string Get(int id)
         {

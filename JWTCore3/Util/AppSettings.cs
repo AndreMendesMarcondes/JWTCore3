@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace JWTCore3.Util
+﻿namespace JWTCore3.Util
 {
     public class AppSettings
     {

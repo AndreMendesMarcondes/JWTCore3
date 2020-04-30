@@ -40,7 +40,7 @@ namespace JWTCore3.Controllers
             {
                 UserName = registerCheckInUser.Email,
                 Email = registerCheckInUser.Email,
-                EmailConfirmed = true                
+                EmailConfirmed = true
             };
 
             var result = await _userManager.CreateAsync(user, registerCheckInUser.Password);
@@ -60,7 +60,7 @@ namespace JWTCore3.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(e => e.Errors));
 
-            var result = await _signInManager.PasswordSignInAsync(checkInUserLogin.Email, checkInUserLogin.Password, true, false);            
+            var result = await _signInManager.PasswordSignInAsync(checkInUserLogin.Email, checkInUserLogin.Password, true, false);
 
             if (result.Succeeded) return Ok(await GerarJwt(checkInUserLogin.Email));
 
