@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -39,10 +40,13 @@ namespace JWTCore3.Controllers
             {
                 UserName = registerCheckInUser.Email,
                 Email = registerCheckInUser.Email,
-                EmailConfirmed = true
+                EmailConfirmed = true                
             };
 
             var result = await _userManager.CreateAsync(user, registerCheckInUser.Password);
+            var userIdentity = await _userManager.FindByNameAsync(registerCheckInUser.Email);
+            await _userManager.AddClaimAsync(userIdentity, new Claim("Product", "Get"));
+
 
             if (!result.Succeeded) return BadRequest(result.Errors);
 
@@ -56,7 +60,7 @@ namespace JWTCore3.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(e => e.Errors));
 
-            var result = await _signInManager.PasswordSignInAsync(checkInUserLogin.Email, checkInUserLogin.Password, true, false);
+            var result = await _signInManager.PasswordSignInAsync(checkInUserLogin.Email, checkInUserLogin.Password, true, false);            
 
             if (result.Succeeded) return Ok(await GerarJwt(checkInUserLogin.Email));
 
@@ -67,11 +71,15 @@ namespace JWTCore3.Controllers
         {
             var user = await _userManager.FindByNameAsync(email);
 
+            var identityClaims = new ClaimsIdentity();
+            identityClaims.AddClaims(await _userManager.GetClaimsAsync(user));
+
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
+                Subject = identityClaims,
                 Issuer = _appSettings.Emitter,
                 Audience = _appSettings.ValidAt,
                 Expires = DateTime.UtcNow.AddHours(_appSettings.ExpirationHours),

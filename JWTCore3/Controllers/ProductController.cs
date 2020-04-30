@@ -17,6 +17,7 @@ namespace JWTCore3.Controllers
         }
 
         // GET: api/Product/5
+        [ClaimsAuthorize("Product","Get")]
         [HttpGet("{id}", Name = "Get")]
         public string Get(int id)
         {
